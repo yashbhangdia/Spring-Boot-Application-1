@@ -1,6 +1,6 @@
 def remote = []
 
-data = [["jenkins", "5c832d8a-57a6-405f-a1be-7eb0b12d517d", "192.168.50.50"], ["jenkins02", "Jenkins_2", "192.168.51.51"]]
+data = [["virtual_machine_1", "5c832d8a-57a6-405f-a1be-7eb0b12d517d", "192.168.50.50"], ["virtual_machine_2", "Jenkins_2", "192.168.51.51"]]
 
 for(int i=0;i<2;i++)
 {
@@ -36,12 +36,11 @@ node {
 	            withCredentials([sshUserPrivateKey(credentialsId: item.id, keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: item.name)]) {
     			  item.user = item.name
     			  item.identityFile = identity
-                  
-    			  sshCommand remote: item, command: 'mkdir deployment', failOnError:'false'
-    			  sshCommand remote : item, command: 'cd /home/'+"${item.name}"+'/deployment; PID=`ps -eaf | grep "java -jar" | grep -v grep | awk "{print $2}"`; if [[ "" !=  "$PID" ]]; then echo "found $PID and killing it!!" ; kill -9 $PID; fi'
-    			  sshCommand remote: item, command: 'rm /home/'+"${item.name}"+'/deployment/*.war', failOnError:'false'
-    			  sshPut remote: item, from: 'target/Application.war', into: '/home/'+"${item.name}"+'/deployment/'
-    			  sshCommand remote: item, command: 'cd /home/'+"${item.name}"+'/deployment; nohup java -jar Application.war >> app.log &'
+    			  sshCommand remote: item, command: 'rm -R deployment', failOnError:'false'
+    			  sshCommand remote: item, command: 'mkdir deployment', failOnError:false
+    			  sshCommand remote : item, command: 'cd /home/'+"${item.name}"+'/deployment; PID=`ps -eaf | grep "java -jar" | grep -v grep | awk \'{print $2}\'`; if [[ "" !=  "$PID" ]]; then echo "found $PID and killing it!!" ; kill -9 $PID; fi'
+    			  sshPut remote: item, from: "./target", filterRegex: /.war$/, into: '/home/'+"${item.name}"+'/deployment/'
+    			  sshCommand remote: item, command: 'cd /home/'+"${item.name}"+'/deployment/target; nohup java -jar *.war >> app.log &'
     	        }
 	        }
 	    }
@@ -59,14 +58,16 @@ node {
         			  item.user = item.name
         			  item.identityFile = identity
         
-        			  sshCommand remote: item, command: 'rm -R temp', failOnError:'false'
-        			  sshCommand remote: item, command: 'cd /home/'+"${item.name}"+'/deployment; mkdir temp; cd temp; jar xvf ../Application.war'
+        			  sshCommand remote: item, command: 'cd /home/'+"${item.name}"+'/deployment; rm -R temp', failOnError:'false'
+        			  sshCommand remote: item, command: 'cd /home/'+"${item.name}"+'/deployment; mkdir temp; cd temp; jar xvf ../target/*.war'
         			  sshCommand remote: item, command: 'cd /home/'+"${item.name}"+'/deployment/temp/META-INF/maven/org.springframework.boot/SpringBootMavenExample; ls'
-        			  sshGet remote: item, from:'deployment/temp/META-INF/maven/org.springframework.boot/SpringBootMavenExample/pom.properties', into: 'info/'+"${item.host}"+'.txt', override: true
-        			  sshCommand remote: item, command: 'rm -R temp', failOnError:'false'
+        			  sshGet remote: item, from:'deployment/temp/META-INF/maven/org.springframework.boot/SpringBootMavenExample/pom.properties', into: 'info/'+"${item.name}"+"-"+"${item.host}"+'.txt', override: true
+        			  sshCommand remote: item, command: 'cd /home/'+"${item.name}"+'/deployment; rm -R temp', failOnError:'false'
               }
           }
       }
+      
+      echo "For Dashboard : http://127.0.0.1:5000/ "
   }
 
 }
