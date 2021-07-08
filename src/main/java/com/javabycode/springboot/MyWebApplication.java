@@ -25,6 +25,7 @@ public class MyWebApplication extends SpringBootServletInitializer{
     public static void main(String[] args) throws Exception {
 //         System.out.println(InetAddress.getLocalHost().getHostAddress());
         ArrayList<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+        int flag = 0;
         for (NetworkInterface iface : interfaces)
         {
             for (InterfaceAddress addr : iface.getInterfaceAddresses()) 
@@ -32,9 +33,14 @@ public class MyWebApplication extends SpringBootServletInitializer{
                if(addr.getAddress().toString().startsWith("/192.168."))
                {
                    System.out.println(addr.getAddress().toString().substring(1));
+                   flag=1;
 //                    System.setProperty("server.address", addr.getAddress().toString().subString(1));
                    break;
                }
+                if(flag==1)
+                {
+                    break;
+                }
             } 
         }
         
