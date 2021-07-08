@@ -15,6 +15,7 @@ public class MyWebApplication extends SpringBootServletInitializer{
     }
 
     public static void main(String[] args) throws Exception {
+        System.out.println(InetAddress.getLocalHost().getHostAddress());
         SpringApplication.run(MyWebApplication.class, args);
     }
 }
