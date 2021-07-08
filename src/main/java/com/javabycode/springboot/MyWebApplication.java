@@ -34,7 +34,7 @@ public class MyWebApplication extends SpringBootServletInitializer{
                {
 //                    System.out.println(addr.getAddress().toString().substring(1));
                    flag=1;
-                   System.setProperty("server.address", addr.getAddress().toString().subString(1));
+                   System.setProperty("server.address", addr.getAddress().toString().substring(1));
                    break;
                }
                 if(flag==1)
