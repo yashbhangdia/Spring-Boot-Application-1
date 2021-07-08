@@ -29,7 +29,12 @@ public class MyWebApplication extends SpringBootServletInitializer{
         {
             for (InterfaceAddress addr : iface.getInterfaceAddresses()) 
             {
-                System.out.println("\t\t" + addr.getAddress().toString());
+               if(addr.getAddress().toString().startsWith("/192.168."))
+               {
+                   System.out.println(addr.getAddress().toString().subString(1));
+//                    System.setProperty("server.address", addr.getAddress().toString().subString(1));
+                   break;
+               }
             } 
         }
         
