@@ -31,7 +31,7 @@ public class MyWebApplication extends SpringBootServletInitializer{
             {
                if(addr.getAddress().toString().startsWith("/192.168."))
                {
-                   System.out.println(addr.getAddress().toString().subString(1));
+                   System.out.println(addr.getAddress().toString().substring(1));
 //                    System.setProperty("server.address", addr.getAddress().toString().subString(1));
                    break;
                }
