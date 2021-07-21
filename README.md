@@ -23,10 +23,12 @@
 
 ## Usage
 For Binary:
-mvn clean package
+`mvn clean package`
+
 
 For Running service:
-java -jar (binaryname).jar
+`java -jar (binaryname).jar`
+
 
 
 
